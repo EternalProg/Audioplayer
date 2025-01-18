@@ -1,5 +1,6 @@
 package com.audioplayer.api.model;
 
+import com.audioplayer.api.DTO.UserCreateDTO;
 import com.audioplayer.api.DTO.UserDTO;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -28,11 +29,11 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Playlist> playlists = new ArrayList<>();
 
-    public User(UserDTO userDTO) {
+    public User(UserCreateDTO userDTO) {
         setAll(userDTO);
     }
 
-    public void setAll(UserDTO userDTO) {
+    public void setAll(UserCreateDTO userDTO) {
         this.username = userDTO.getUsername();
         this.password = userDTO.getPassword();
     }

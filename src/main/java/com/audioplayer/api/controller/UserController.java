@@ -1,9 +1,10 @@
 package com.audioplayer.api.controller;
 
+import com.audioplayer.api.DTO.UserCreateDTO;
 import com.audioplayer.api.DTO.UserDTO;
-import com.audioplayer.api.model.User;
 import com.audioplayer.api.repository.UserRepository;
 import com.audioplayer.api.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,14 +25,14 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @GetMapping("/{username}")
+    @GetMapping("/by-username/{username}")
     public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String username) {
         Optional<UserDTO> userDtoOpt = userService.getUserByUsername(username);
         return userDtoOpt.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/by-id/{userId}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
         Optional<UserDTO> userDtoOpt = userService.getUserById(userId);
         return userDtoOpt.map(ResponseEntity::ok)
@@ -39,19 +40,20 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserDTO userDTO) {
-        userService.createUser(userDTO);
-        return ResponseEntity.status(201).body(userDTO);
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserCreateDTO userDTO) {
+        Optional<UserDTO> userDtoOpt = userService.createUser(userDTO);
+        return userDtoOpt.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT).build());
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, @RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long userId, @RequestBody UserCreateDTO userDTO) {
         Optional<UserDTO> userDtoOpt = userService.updateUser(userId, userDTO);
         return userDtoOpt.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/by-id/{userId}")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long userId) {
         if (userService.deleteUser(userId)) {
             return ResponseEntity.noContent().build();
@@ -59,7 +61,7 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/{username}")
+    @DeleteMapping("/by-username/{username}")
     public ResponseEntity<Void> deleteUserByUsername(@PathVariable String username) {
         if (userService.deleteUser(username)) {
             return ResponseEntity.noContent().build();

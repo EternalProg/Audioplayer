@@ -1,5 +1,6 @@
 package com.audioplayer.api.service;
 
+import com.audioplayer.api.DTO.UserCreateDTO;
 import com.audioplayer.api.DTO.UserDTO;
 import com.audioplayer.api.model.User;
 import com.audioplayer.api.repository.UserRepository;
@@ -34,16 +35,18 @@ public class UserService {
         return userOpt.map(UserDTO::new);
     }
 
-    public void createUser(UserDTO userDTO) {
+    public Optional<UserDTO> createUser(UserCreateDTO userDTO) {
         // потрібно додати хешування пароля перед збереженням
-        userRepository.save(new User(userDTO));
+        User user = new User(userDTO);
+        return Optional.of(new UserDTO(userRepository.save(user)));
     }
 
-    public Optional<UserDTO> updateUser(Long userId, UserDTO userDTO) {
+    public Optional<UserDTO> updateUser(Long userId, UserCreateDTO userDTO) {
         Optional<User> userOpt = userRepository.findById(userId);
         if (userOpt.isPresent()) {
-            userOpt.get().setAll(userDTO);
-            return Optional.of(userDTO);
+            User user = userOpt.get();
+            user.setAll(userDTO);
+            return Optional.of(new UserDTO(userRepository.save(user)));
         }
         System.out.println("User not found");
         return Optional.empty();
