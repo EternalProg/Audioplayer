@@ -54,17 +54,17 @@ public class UserController {
     }
 
     @DeleteMapping("/by-id/{userId}")
-    public ResponseEntity<Void> deleteUserById(@PathVariable Long userId) {
+    public ResponseEntity<String> deleteUserById(@PathVariable Long userId) {
         if (userService.deleteUser(userId)) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok("User deleted");
         }
         return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/by-username/{username}")
-    public ResponseEntity<Void> deleteUserByUsername(@PathVariable String username) {
+    public ResponseEntity<String> deleteUserByUsername(@PathVariable String username) {
         if (userService.deleteUser(username)) {
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok("User deleted");
         }
         return ResponseEntity.notFound().build();
     }

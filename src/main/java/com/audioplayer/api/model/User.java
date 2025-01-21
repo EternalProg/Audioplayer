@@ -1,13 +1,12 @@
 package com.audioplayer.api.model;
 
 import com.audioplayer.api.DTO.UserCreateDTO;
-import com.audioplayer.api.DTO.UserDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -27,7 +26,10 @@ public class User {
 
     // mappedBy = "user" вказує, що зв’язок контролюється полем user у класі Playlist.
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Playlist> playlists = new ArrayList<>();
+    private Set<Playlist> playlists;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true) // Вказуємо, що це зворотний зв’язок
+    private Set<Audiofile> audiofiles;
 
     public User(UserCreateDTO userDTO) {
         setAll(userDTO);
