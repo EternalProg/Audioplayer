@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -27,7 +27,7 @@ public class Playlist {
 
     // Плейлист може містити декілька аудіофайлів, і кожен аудіофайл може бути в багатьох плейлистах:
     @OneToMany(mappedBy = "playlist", orphanRemoval = true)
-    private ArrayList<PlaylistAudiofile> playlistAudiofiles;
+    private List<PlaylistAudiofile> playlistAudiofiles;
 
     public Playlist(PlaylistCreateDTO playlistCreateDTO) {
         setAll(playlistCreateDTO);
