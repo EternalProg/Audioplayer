@@ -1,18 +1,23 @@
 package com.audioplayer.api.model;
 
+import com.audioplayer.api.DTO.PlaylistCreateDTO;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-
-// Тобто мені потрібно зберігати в плейлистах айді з усіма треками які пренадлежть їй.
-// Або в аудіофайлах, всі плейлисти в які цей файл входить
+@Data
 @Entity
+@NoArgsConstructor
+@Table(name = "playlists", uniqueConstraints = {@UniqueConstraint(columnNames = {"title", "user_id"})})
 public class Playlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+
+    @Column(nullable = false)
+    private String title;
 
     // Плейлист належить одному користувачу: Тут поле user вказує на користувача, якому належить плейлист.
     // У базі даних це реалізується через зовнішній ключ user_id у таблиці playlist.
@@ -20,30 +25,15 @@ public class Playlist {
     @JoinColumn(name = "user_id")
     private User user;
 
-
     // Плейлист може містити декілька аудіофайлів, і кожен аудіофайл може бути в багатьох плейлистах:
-    @OneToMany(mappedBy = "playlist")
+    @OneToMany(mappedBy = "playlist", orphanRemoval = true)
     private List<PlaylistAudiofile> playlistAudiofiles;
 
-
-    public Long getId() {
-        return id;
+    public Playlist(PlaylistCreateDTO playlistCreateDTO) {
+        setAll(playlistCreateDTO);
     }
 
-    public String getName() {
-        return name;
+    public void setAll(PlaylistCreateDTO playlistCreateDTO) {
+        this.title = playlistCreateDTO.getTitle();
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
 }
